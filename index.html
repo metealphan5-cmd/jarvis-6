@@ -1,0 +1,959 @@
+```html
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>JARVIS 5</title>
+
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --main: #ff8c00;
+      --glow: rgba(255, 140, 0, 0.65);
+      --bg: #020407;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at center,
+          rgba(255, 140, 0, 0.10) 0%,
+          rgba(0, 0, 0, 0.0) 32%),
+        radial-gradient(circle at center, #071016 0%, #020407 60%, #000 100%);
+      color: var(--main);
+      font-family: Arial, Helvetica, sans-serif;
+      transition: color 0.5s ease, background 0.5s ease;
+    }
+
+    /* =========================
+       ÜST BAR
+       ========================= */
+
+    .top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 78px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 28px;
+
+      border-bottom: 1px solid var(--main);
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(12px);
+
+      box-shadow: 0 0 25px var(--glow);
+
+      z-index: 20;
+    }
+
+    .brand {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 7px;
+      text-shadow:
+        0 0 8px var(--main),
+        0 0 20px var(--main);
+    }
+
+    .version {
+      font-size: 12px;
+      letter-spacing: 3px;
+      opacity: 0.65;
+    }
+
+    /* =========================
+       ANA ALAN
+       ========================= */
+
+    .main {
+      min-height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding-top: 70px;
+    }
+
+    /* =========================
+       REAKTÖR
+       ========================= */
+
+    .reactor {
+      position: relative;
+
+      width: 310px;
+      height: 310px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      filter:
+        drop-shadow(0 0 12px var(--main))
+        drop-shadow(0 0 35px var(--glow));
+
+      transition:
+        filter 0.5s ease,
+        transform 0.5s ease;
+    }
+
+    .reactor:hover {
+      transform: scale(1.025);
+    }
+
+    /* Dış enerji halkası */
+
+    .outer-ring {
+      position: absolute;
+      inset: 0;
+
+      border-radius: 50%;
+
+      border: 3px solid var(--main);
+
+      box-shadow:
+        0 0 12px var(--main),
+        0 0 35px var(--glow),
+        inset 0 0 20px var(--glow);
+
+      animation: outerSpin 18s linear infinite;
+    }
+
+    .outer-ring::before,
+    .outer-ring::after {
+      content: "";
+
+      position: absolute;
+
+      inset: 17px;
+
+      border-radius: 50%;
+
+      border: 1px dashed var(--main);
+
+      opacity: 0.75;
+    }
+
+    .outer-ring::after {
+      inset: 32px;
+
+      border-style: solid;
+
+      border-left-color: transparent;
+      border-right-color: transparent;
+
+      animation: reverseSpin 9s linear infinite;
+    }
+
+    /* Teknolojik parçalar */
+
+    .tech-ring {
+      position: absolute;
+
+      width: 235px;
+      height: 235px;
+
+      border-radius: 50%;
+
+      border: 2px solid var(--main);
+
+      box-shadow:
+        0 0 15px var(--glow),
+        inset 0 0 15px var(--glow);
+
+      animation: spin 12s linear infinite;
+    }
+
+    .tech-ring::before,
+    .tech-ring::after {
+      content: "";
+
+      position: absolute;
+
+      width: 18px;
+      height: 18px;
+
+      border: 2px solid var(--main);
+
+      box-shadow: 0 0 12px var(--main);
+    }
+
+    .tech-ring::before {
+      top: -10px;
+      left: 50%;
+
+      transform: translateX(-50%);
+    }
+
+    .tech-ring::after {
+      bottom: -10px;
+      left: 50%;
+
+      transform: translateX(-50%);
+    }
+
+    /* İç halka */
+
+    .inner-ring {
+      position: absolute;
+
+      width: 175px;
+      height: 175px;
+
+      border-radius: 50%;
+
+      border: 5px solid var(--main);
+
+      box-shadow:
+        0 0 15px var(--main),
+        0 0 35px var(--glow),
+        inset 0 0 25px var(--glow);
+
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Merkez */
+
+    .core {
+      position: absolute;
+
+      width: 92px;
+      height: 92px;
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          #ffffff 0%,
+          var(--main) 18%,
+          var(--main) 35%,
+          rgba(0,0,0,0.8) 70%
+        );
+
+      box-shadow:
+        0 0 15px #fff,
+        0 0 30px var(--main),
+        0 0 65px var(--main),
+        0 0 110px var(--glow);
+
+      animation: corePulse 1.5s ease-in-out infinite;
+    }
+
+    /* Merkezdeki çizgi */
+
+    .core-line {
+      position: absolute;
+
+      width: 145px;
+      height: 2px;
+
+      background: var(--main);
+
+      box-shadow:
+        0 0 8px var(--main),
+        0 0 20px var(--main);
+
+      animation: linePulse 1.5s ease-in-out infinite;
+    }
+
+    /* =========================
+       DURUM
+       ========================= */
+
+    .status {
+      margin-top: 38px;
+
+      min-height: 28px;
+
+      max-width: 85%;
+
+      text-align: center;
+
+      font-size: 18px;
+
+      letter-spacing: 3px;
+
+      text-transform: uppercase;
+
+      text-shadow:
+        0 0 8px var(--main),
+        0 0 20px var(--main);
+
+      transition: color 0.4s ease;
+    }
+
+    /* =========================
+       BUTONLAR
+       ========================= */
+
+    .controls {
+      display: flex;
+
+      gap: 15px;
+
+      margin-top: 25px;
+
+      flex-wrap: wrap;
+
+      justify-content: center;
+    }
+
+    button {
+      position: relative;
+
+      min-width: 220px;
+
+      padding: 15px 25px;
+
+      border: 1px solid var(--main);
+
+      border-radius: 5px;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,0.04),
+          rgba(0,0,0,0.3)
+        );
+
+      color: var(--main);
+
+      font-size: 15px;
+
+      font-weight: bold;
+
+      letter-spacing: 3px;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 0 10px var(--glow),
+        inset 0 0 10px rgba(255,255,255,0.03);
+
+      transition:
+        0.25s ease;
+
+      overflow: hidden;
+    }
+
+    button::before {
+      content: "";
+
+      position: absolute;
+
+      left: -100%;
+
+      top: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.18),
+        transparent
+      );
+
+      transition: 0.5s;
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:hover {
+      background: var(--main);
+
+      color: #000;
+
+      box-shadow:
+        0 0 20px var(--main),
+        0 0 45px var(--glow);
+
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    /* =========================
+       ALT BİLGİ
+       ========================= */
+
+    .footer {
+      position: fixed;
+
+      bottom: 15px;
+
+      width: 100%;
+
+      text-align: center;
+
+      font-size: 10px;
+
+      letter-spacing: 3px;
+
+      opacity: 0.35;
+    }
+
+    /* =========================
+       DURUMLAR
+       ========================= */
+
+    body.thinking {
+      --main: #00aaff;
+      --glow: rgba(0, 170, 255, 0.7);
+    }
+
+    body.speaking {
+      --main: #00ff73;
+      --glow: rgba(0, 255, 115, 0.7);
+    }
+
+    body.error {
+      --main: #ff2020;
+      --glow: rgba(255, 32, 32, 0.7);
+    }
+
+    /* =========================
+       ANİMASYONLAR
+       ========================= */
+
+    @keyframes outerSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes reverseSpin {
+      from {
+        transform: rotate(360deg);
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.045);
+      }
+    }
+
+    @keyframes corePulse {
+      0%, 100% {
+        transform: scale(0.92);
+      }
+
+      50% {
+        transform: scale(1.08);
+      }
+    }
+
+    @keyframes linePulse {
+      0%, 100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .top {
+        padding: 0 15px;
+      }
+
+      .brand {
+        font-size: 20px;
+        letter-spacing: 5px;
+      }
+
+      .reactor {
+        width: 260px;
+        height: 260px;
+      }
+
+      .tech-ring {
+        width: 200px;
+        height: 200px;
+      }
+
+      .inner-ring {
+        width: 150px;
+        height: 150px;
+      }
+
+      .core {
+        width: 75px;
+        height: 75px;
+      }
+
+      button {
+        width: 85vw;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="top">
+    <div class="brand">JARVIS</div>
+    <div class="version">SYSTEM V5</div>
+  </header>
+
+  <main class="main">
+
+    <div class="reactor">
+
+      <div class="outer-ring"></div>
+
+      <div class="tech-ring"></div>
+
+      <div class="inner-ring"></div>
+
+      <div class="core-line"></div>
+
+      <div class="core"></div>
+
+    </div>
+
+    <div id="status" class="status">
+      SİSTEM HAZIR
+    </div>
+
+    <div class="controls">
+
+      <button id="speakButton">
+        JARVIS KONUŞ
+      </button>
+
+      <button id="listenButton">
+        BENİ DİNLE
+      </button>
+
+    </div>
+
+  </main>
+
+  <div class="footer">
+    JARVIS ARTIFICIAL INTELLIGENCE SYSTEM
+  </div>
+
+  <script>
+
+    /* ==========================================
+       JARVIS 5
+       ========================================== */
+
+    const statusElement =
+      document.getElementById("status");
+
+    const speakButton =
+      document.getElementById("speakButton");
+
+    const listenButton =
+      document.getElementById("listenButton");
+
+
+    /* ==========================================
+       DURUM SİSTEMİ
+       ========================================== */
+
+    function setState(state, message) {
+
+      document.body.classList.remove(
+        "thinking",
+        "speaking",
+        "error"
+      );
+
+      if (state !== "idle") {
+        document.body.classList.add(state);
+      }
+
+      statusElement.textContent = message;
+    }
+
+
+    /* ==========================================
+       METİN TEMİZLEME
+       Emojilerin ve sembollerin okunmasını engeller.
+       ========================================== */
+
+    function temizleMetin(text) {
+
+      return text
+        .replace(
+          /[\u{1F300}-\u{1FAFF}]/gu,
+          ""
+        )
+        .replace(
+          /[\u{2600}-\u{27BF}]/g,
+          ""
+        )
+        .replace(
+          /[*_#`~<>[\]{}|]/g,
+          ""
+        )
+        .replace(
+          /\s+/g,
+          " "
+        )
+        .trim();
+    }
+
+
+    /* ==========================================
+       TÜRKÇE SESLERİ BUL
+       ========================================== */
+
+    function turkceSesBul() {
+
+      const voices =
+        window.speechSynthesis.getVoices();
+
+      return voices.find(
+        voice =>
+          voice.lang &&
+          voice.lang.toLowerCase() === "tr-tr"
+      ) || voices.find(
+        voice =>
+          voice.lang &&
+          voice.lang.toLowerCase().startsWith("tr")
+      );
+    }
+
+
+    /* ==========================================
+       JARVIS KONUŞ
+       ========================================== */
+
+    function jarvisKonus(text) {
+
+      return new Promise((resolve) => {
+
+        const temiz =
+          temizleMetin(text);
+
+        if (!temiz) {
+          resolve();
+          return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        setState(
+          "speaking",
+          "JARVIS KONUŞUYOR"
+        );
+
+        const utterance =
+          new SpeechSynthesisUtterance(
+            temiz
+          );
+
+        utterance.lang = "tr-TR";
+
+        utterance.rate = 0.88;
+
+        utterance.pitch = 0.72;
+
+        utterance.volume = 1;
+
+        const voice =
+          turkceSesBul();
+
+        if (voice) {
+          utterance.voice = voice;
+        }
+
+        utterance.onend = () => {
+
+          setState(
+            "idle",
+            "SİSTEM HAZIR"
+          );
+
+          resolve();
+        };
+
+        utterance.onerror = () => {
+
+          setState(
+            "error",
+            "SES SİSTEMİ HATASI"
+          );
+
+          resolve();
+        };
+
+        window.speechSynthesis.speak(
+          utterance
+        );
+
+      });
+    }
+
+
+    /* ==========================================
+       SESLERİ YÜKLE
+       ========================================== */
+
+    window.speechSynthesis.onvoiceschanged =
+      function () {
+
+        window.speechSynthesis
+          .getVoices();
+
+      };
+
+
+    /* ==========================================
+       TEST KONUŞMASI
+       ========================================== */
+
+    speakButton.addEventListener(
+      "click",
+      async function () {
+
+        await jarvisKonus(
+          "Merhaba. Ben JARVIS. Sistemlerim hazır."
+        );
+
+      }
+    );
+
+
+    /* ==========================================
+       MİKROFON
+       ========================================== */
+
+    listenButton.addEventListener(
+      "click",
+      function () {
+
+        const Recognition =
+          window.SpeechRecognition ||
+          window.webkitSpeechRecognition;
+
+        if (!Recognition) {
+
+          setState(
+            "error",
+            "MİKROFON DESTEKLENMİYOR"
+          );
+
+          return;
+        }
+
+        const recognition =
+          new Recognition();
+
+        recognition.lang =
+          "tr-TR";
+
+        recognition.continuous =
+          false;
+
+        recognition.interimResults =
+          false;
+
+        setState(
+          "thinking",
+          "SENİ DİNLİYORUM"
+        );
+
+        try {
+
+          recognition.start();
+
+        } catch (error) {
+
+          setState(
+            "error",
+            "MİKROFON BAŞLATILAMADI"
+          );
+
+        }
+
+
+        recognition.onresult =
+          async function (event) {
+
+            const userText =
+              event.results[0][0]
+                .transcript;
+
+            setState(
+              "thinking",
+              "JARVIS DÜŞÜNÜYOR"
+            );
+
+            try {
+
+              const response =
+                await puter.ai.chat(
+                  userText,
+                  {
+                    model:
+                      "gpt-5.6-luna"
+                  }
+                );
+
+              let answer = "";
+
+              if (
+                typeof response ===
+                "string"
+              ) {
+
+                answer = response;
+
+              } else if (
+                response &&
+                response.message &&
+                response.message.content
+              ) {
+
+                answer =
+                  response.message.content;
+
+              } else if (
+                response &&
+                response.text
+              ) {
+
+                answer =
+                  response.text;
+
+              } else {
+
+                answer =
+                  "Üzgünüm, cevap alamadım.";
+
+              }
+
+              await jarvisKonus(
+                answer
+              );
+
+            } catch (error) {
+
+              console.error(error);
+
+              setState(
+                "error",
+                "YAPAY ZEKA BAĞLANTI HATASI"
+              );
+
+              await jarvisKonus(
+                "Üzgünüm. Bir hata oluştu."
+              );
+
+            }
+
+          };
+
+
+        recognition.onerror =
+          function (event) {
+
+            console.error(
+              event
+            );
+
+            setState(
+              "error",
+              "MİKROFON HATASI"
+            );
+
+          };
+
+
+        recognition.onend =
+          function () {
+
+            if (
+              !document.body.classList.contains(
+                "error"
+              )
+            ) {
+
+              if (
+                statusElement.textContent ===
+                "SENİ DİNLİYORUM"
+              ) {
+
+                setState(
+                  "idle",
+                  "SİSTEM HAZIR"
+                );
+
+              }
+
+            }
+
+          };
+
+      }
+    );
+
+
+    /* ==========================================
+       BAŞLANGIÇ
+       ========================================== */
+
+    setState(
+      "idle",
+      "SİSTEM HAZIR"
+    );
+
+  </script>
+
+</body>
+</html>
+```
